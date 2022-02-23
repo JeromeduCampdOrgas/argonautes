@@ -132,7 +132,9 @@ export default {
       store.dispatch("getArgonautes", this.allArgonautes);
     },
     deleteArgonaute(e) {
-      let toDelete = e.target.parentNode.parentNode.childNodes[0].innerHTML;
+      let toDelete =
+        e.target.parentNode.parentNode.parentNode.childNodes[0].innerHTML;
+
       for (let i = 0; i < this.allArgonautes.length; i++) {
         if (this.allArgonautes[i].name == toDelete) {
           let argonauteId = this.allArgonautes[i].id;
@@ -140,6 +142,7 @@ export default {
           configAxios.get(`argonautes`).then((response) => {
             this.allArgonautes = response.data;
             store.dispatch("getArgonautes", this.allArgonautes);
+            location.replace("/");
           });
         }
       }
