@@ -34,8 +34,11 @@
                 >
                   <span></span> Valider
                 </button>
-                <span class="alerte" v-if="this.existe"
+                <span class="alerte" v-if="this.trouve"
                   >Cet Argonaute est déjà dans l'équipage</span
+                >
+                <span class="alerte" v-if="!this.nouveau"
+                  >Veuilliez entrer le nom d'un argonaute</span
                 >
               </div>
             </form>
@@ -44,7 +47,7 @@
       </div>
     </div>
     <div class="equipe" style="margin-top: 15px">
-      <h1 class="text-primary">Equipe</h1>
+      <h1 class="text-primary">Equipage</h1>
       <div class="container-fluid" style="margin-top: 50px">
         <table class="table">
           <thead class="table-dark">
@@ -105,30 +108,43 @@ export default {
     return {
       argonautes: store.state.allArgonautes,
       allArgonautes: [],
-      existe: false,
+      trouve: false,
+      nouveau: true,
       nomToUpdate: "",
     };
   },
   methods: {
-    raz() {
-      this.existe = false;
+    raz(e) {
+      this.trouve = false;
+      this.nouveau = true;
+      let inputValue = e.target;
+      inputValue.value = "";
     },
     createArgonaute() {
-      let name = document.getElementById("name").value;
-      for (let i = 0; i < this.allArgonautes.length; i++) {
-        if (this.allArgonautes[i].name == name) {
-          return (this.existe = true);
-        } else {
-          this.allArgonautes = "";
-          configAxios.post("create", { name: name }).then(() => {
-            configAxios.get(`argonautes`).then((response) => {
-              this.allArgonautes = response.data;
-              store.dispatch("getArgonautes", this.allArgonautes);
-            });
-          });
+      let toCreate = document.getElementById("name").value;
+      if (!toCreate) {
+        return (this.nouveau = !this.nouveau);
+      } else if (toCreate) {
+        for (let i = 0; i < this.allArgonautes.length; i++) {
+          if (this.allArgonautes[i].name === toCreate) {
+            return (this.trouve = !this.trouve);
+          }
         }
       }
-      this.allArgonautes.push(name);
+
+      if (!this.trouve) {
+        this.allArgonautes = "";
+        configAxios.post("create", { name: toCreate }).then(() => {
+          configAxios.get(`argonautes`).then((response) => {
+            this.allArgonautes = response.data;
+            store.dispatch("getArgonautes", this.allArgonautes);
+            this.trouve = false;
+            this.nouveau = true;
+            toCreate = "";
+          });
+        });
+      }
+
       store.dispatch("getArgonautes", this.allArgonautes);
     },
     deleteArgonaute(e) {
