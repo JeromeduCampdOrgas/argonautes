@@ -38,7 +38,7 @@
                   >Cet Argonaute est déjà dans l'équipage</span
                 >
                 <span class="alerte" v-if="!this.nouveau"
-                  >Veuilliez entrer le nom d'un argonaute</span
+                  >Veuillez entrer le nom d'un argonaute</span
                 >
               </div>
             </form>
@@ -171,7 +171,7 @@ export default {
       let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
 
       let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
-      console.log(buttonToShow);
+
       toUpdate.classList.remove("inactive");
       toUpdate.classList.add("active");
 
@@ -186,28 +186,35 @@ export default {
         e.target.parentNode.parentNode.parentNode.childNodes[0].innerHTML;
       let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
       let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
-      console.log(buttonToShow);
-      let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
-      for (let i = 0; i < this.allArgonautes.length; i++) {
-        if (this.allArgonautes[i].name == oldName) {
-          let argonauteId = this.allArgonautes[i].id;
-          configAxios
-            .put(`argonaute/${argonauteId}`, {
-              name: this.nomToUpdate,
-            })
-            .then(() => {
-              configAxios.get(`argonautes`).then((response) => {
-                this.allArgonautes = response.data;
-                store.dispatch("getArgonautes", this.allArgonautes);
-                toUpdate.classList.remove("inactive");
-                toUpdate.classList.add("inactive");
-                buttonToHide.classList.remove("inactive");
-                buttonToHide.classList.add("active");
 
-                buttonToShow.classList.remove("active");
-                buttonToShow.classList.add("inactive");
+      let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
+
+      if (this.nomToUpdate == "") {
+        alert("Veuillez entrer un nom d'argonaute");
+        this.nomToUpdate = oldName;
+        return this.nomToUpdate;
+      } else {
+        for (let i = 0; i < this.allArgonautes.length; i++) {
+          if (this.allArgonautes[i].name == oldName) {
+            let argonauteId = this.allArgonautes[i].id;
+            configAxios
+              .put(`argonaute/${argonauteId}`, {
+                name: this.nomToUpdate,
+              })
+              .then(() => {
+                configAxios.get(`argonautes`).then((response) => {
+                  this.allArgonautes = response.data;
+                  store.dispatch("getArgonautes", this.allArgonautes);
+                  toUpdate.classList.remove("inactive");
+                  toUpdate.classList.add("inactive");
+                  buttonToHide.classList.remove("inactive");
+                  buttonToHide.classList.add("active");
+
+                  buttonToShow.classList.remove("active");
+                  buttonToShow.classList.add("inactive");
+                });
               });
-            });
+          }
         }
       }
     },
