@@ -38,4 +38,15 @@ export default {};
     }
   }
 }
+@media only screen and (max-width: 883px) {
+  .header {
+    & div {
+      display: flex;
+      flex-direction: column;
+      & h1 {
+        margin: auto;
+      }
+    }
+  }
+}
 </style>

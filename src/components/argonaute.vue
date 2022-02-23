@@ -232,4 +232,15 @@ td {
   width: 50%;
   margin-left: 100px;
 }
+
+@media only screen and (max-width: 883px) {
+  .container-fluid {
+    display: flex;
+    flex-direction: column;
+  }
+  .equipe {
+    width: 100%;
+    margin-top: 0;
+  }
+}
 </style>
