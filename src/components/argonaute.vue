@@ -54,23 +54,49 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="argonaute in this.allArgonautes" :key="argonaute.id">
-              <td>{{ argonaute.name }}</td>
+            <tr
+              v-for="argonaute in this.allArgonautes"
+              :key="argonaute.id"
+              class="d-flex flex-direction-row"
+            >
               <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-primary"
-                  @click="editUser"
-                >
-                  Modifier
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-danger"
-                  @click="deleteArgonaute"
-                >
-                  Supprimer
-                </button>
+                {{ argonaute.name }}
+              </td>
+              <span class="inactive"><input type="text" /></span>
+              <td>
+                <div class="active bouton">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    @click="editArgonaute"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    @click="deleteArgonaute"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+
+                <div class="inactive bouton">
+                  <button
+                    type="button"
+                    class="btn btn-outline-success"
+                    @click="updateArgonaute"
+                  >
+                    Valider
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    @click="deleteArgonaute"
+                  >
+                    Annuler
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -123,11 +149,26 @@ export default {
           configAxios.get(`argonautes`).then((response) => {
             this.allArgonautes = response.data;
             store.dispatch("getArgonautes", this.allArgonautes);
-            //location.replace("/");
           });
         }
       }
     },
+    editArgonaute(e) {
+      console.log(e.target.parentNode.parentNode.childNodes[0]);
+      let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
+      let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
+      let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
+
+      toUpdate.classList.remove("inactive");
+      toUpdate.classList.add("active");
+
+      buttonToHide.classList.remove("active");
+      buttonToHide.classList.add("inactive");
+
+      buttonToShow.classList.remove("inactive");
+      buttonToShow.classList.add("active");
+    },
+    updateArgonaute(e) {},
   },
   beforeMount() {
     configAxios.get(`argonautes`).then((response) => {
@@ -146,5 +187,16 @@ export default {
 }
 .equipe {
   width: 45%;
+}
+.active {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.inactive {
+  display: none;
+}
+.bouton {
+  margin-right: 25px;
 }
 </style>
