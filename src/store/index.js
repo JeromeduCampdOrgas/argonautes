@@ -2,14 +2,14 @@ import Vuex from "vuex";
 import persistedState from "vuex-persistedstate";
 
 const state = {
-  Argonautes: "",
+  argonautes: "",
 };
 
 /********* GETTERS ************************/
 const getters = {
   /*User*/
   getArgonautes: () => {
-    return state.Argonautes;
+    return state.argonautes;
   },
 };
 
@@ -17,7 +17,7 @@ const getters = {
 const mutations = {
   /*User*/
   SET_ARGONAUTES: (state, argonaute) => {
-    state.userLogged = argonaute;
+    state.argonautes = argonaute;
   },
 };
 

@@ -77,6 +77,7 @@
         </table>
       </div>
     </div>
+    {{ this.argonautes }}
   </div>
 </template>
 
@@ -97,11 +98,11 @@ export default {
     },
     createArgonaute() {
       let name = document.getElementById("name").value;
-      console.log(name);
       for (let i = 0; i < this.allArgonautes.length; i++) {
         if (this.allArgonautes[i].name == name) {
           return (this.existe = true);
         } else {
+          this.allArgonautes = "";
           configAxios.post("create", { name: name }).then(() => {
             configAxios.get(`argonautes`).then((response) => {
               this.allArgonautes = response.data;
@@ -122,7 +123,7 @@ export default {
           configAxios.get(`argonautes`).then((response) => {
             this.allArgonautes = response.data;
             store.dispatch("getArgonautes", this.allArgonautes);
-            this.$router.push("/");
+            //location.replace("/");
           });
         }
       }
