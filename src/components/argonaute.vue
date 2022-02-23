@@ -54,16 +54,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="argonaute in this.allArgonautes"
-              :key="argonaute.id"
-              class="d-flex flex-direction-row"
-            >
-              <td>
+            <tr v-for="argonaute in this.allArgonautes" :key="argonaute.id">
+              <td style="text-align: left">
                 {{ argonaute.name }}
               </td>
-              <span class="inactive"><input type="text" /></span>
-              <td>
+              <span class="inactive"
+                ><input type="text" v-model="this.nomToUpdate"
+              /></span>
+              <td class="actions">
                 <div class="active bouton">
                   <button
                     type="button"
@@ -89,13 +87,6 @@
                   >
                     Valider
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger"
-                    @click="deleteArgonaute"
-                  >
-                    Annuler
-                  </button>
                 </div>
               </td>
             </tr>
@@ -103,7 +94,6 @@
         </table>
       </div>
     </div>
-    {{ this.argonautes }}
   </div>
 </template>
 
@@ -116,6 +106,7 @@ export default {
       argonautes: store.state.allArgonautes,
       allArgonautes: [],
       existe: false,
+      nomToUpdate: "",
     };
   },
   methods: {
@@ -154,11 +145,14 @@ export default {
       }
     },
     editArgonaute(e) {
-      console.log(e.target.parentNode.parentNode.childNodes[0]);
+      this.nomToUpdate =
+        e.target.parentNode.parentNode.parentNode.childNodes[0].innerHTML;
+
       let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
       let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
-      let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
 
+      let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
+      console.log(buttonToShow);
       toUpdate.classList.remove("inactive");
       toUpdate.classList.add("active");
 
@@ -168,7 +162,36 @@ export default {
       buttonToShow.classList.remove("inactive");
       buttonToShow.classList.add("active");
     },
-    updateArgonaute(e) {},
+    updateArgonaute(e) {
+      let oldName =
+        e.target.parentNode.parentNode.parentNode.childNodes[0].innerHTML;
+      let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
+      let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
+      console.log(buttonToShow);
+      let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
+      for (let i = 0; i < this.allArgonautes.length; i++) {
+        if (this.allArgonautes[i].name == oldName) {
+          let argonauteId = this.allArgonautes[i].id;
+          configAxios
+            .put(`argonaute/${argonauteId}`, {
+              name: this.nomToUpdate,
+            })
+            .then(() => {
+              configAxios.get(`argonautes`).then((response) => {
+                this.allArgonautes = response.data;
+                store.dispatch("getArgonautes", this.allArgonautes);
+                toUpdate.classList.remove("inactive");
+                toUpdate.classList.add("inactive");
+                buttonToHide.classList.remove("inactive");
+                buttonToHide.classList.add("active");
+
+                buttonToShow.classList.remove("active");
+                buttonToShow.classList.add("inactive");
+              });
+            });
+        }
+      }
+    },
   },
   beforeMount() {
     configAxios.get(`argonautes`).then((response) => {
@@ -198,5 +221,12 @@ export default {
 }
 .bouton {
   margin-right: 25px;
+}
+td {
+  width: 50%;
+}
+.actions {
+  width: 50%;
+  margin-left: 100px;
 }
 </style>
