@@ -96,8 +96,6 @@
           </tbody>
         </table>
       </div>
-      This.oldName: {{ this.oldName }} <br />
-      This.nomToUpdate: {{ this.nomToUpdate }}<br />
     </div>
   </div>
 </template>
