@@ -125,12 +125,14 @@ export default {
       inputValue.value = "";
     },
     createArgonaute() {
-      let toCreate = document.getElementById("name").value;
-      if (!toCreate) {
+      let toCreate = document.getElementById("name");
+      let nomToCreate;
+      nomToCreate = toCreate.value[0].toUpperCase() + toCreate.value.slice(1);
+      if (!toCreate.value) {
         return (this.nouveau = !this.nouveau);
-      } else if (toCreate) {
+      } else if (toCreate.value) {
         for (let i = 0; i < this.allArgonautes.length; i++) {
-          if (this.allArgonautes[i].name === toCreate) {
+          if (this.allArgonautes[i].name === nomToCreate) {
             return (this.trouve = !this.trouve);
           }
         }
@@ -138,13 +140,14 @@ export default {
 
       if (!this.trouve) {
         this.allArgonautes = "";
-        configAxios.post("create", { name: toCreate }).then(() => {
+        configAxios.post("create", { name: nomToCreate }).then(() => {
           configAxios.get(`argonautes`).then((response) => {
             this.allArgonautes = response.data;
             store.dispatch("getArgonautes", this.allArgonautes);
             this.trouve = false;
             this.nouveau = true;
-            toCreate = "";
+            console.log(toCreate);
+            toCreate.value = "";
           });
         });
       }
@@ -212,6 +215,9 @@ export default {
                   this.allArgonautes[j].id != this.idArgonaute &&
                   this.allArgonautes[j].name != this.nomToUpdate
                 ) {
+                  this.nomToUpdate =
+                    this.nomToUpdate[0].toUpperCase() +
+                    this.nomToUpdate.slice(1);
                   configAxios
                     .put(`argonaute/${this.idArgonaute}`, {
                       name: this.nomToUpdate,
