@@ -49,7 +49,7 @@
     <div class="equipe" style="margin-top: 15px">
       <h1 class="text-primary">Equipage</h1>
       <div class="container-fluid" style="margin-top: 50px">
-        <table class="table">
+        <table class="table table-hover">
           <thead class="table-dark">
             <tr>
               <th>Nom</th>
@@ -144,7 +144,7 @@ export default {
             store.dispatch("getArgonautes", this.allArgonautes);
             this.trouve = false;
             this.nouveau = true;
-            console.log(toCreate);
+
             toCreate.value = "";
           });
         });
