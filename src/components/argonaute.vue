@@ -96,6 +96,8 @@
           </tbody>
         </table>
       </div>
+      This.oldName: {{ this.oldName }} <br />
+      This.nomToUpdate: {{ this.nomToUpdate }}<br />
     </div>
   </div>
 </template>
@@ -111,6 +113,8 @@ export default {
       trouve: false,
       nouveau: true,
       nomToUpdate: "",
+      oldName: "",
+      idArgonaute: store.state.idArgonaute,
     };
   },
   methods: {
@@ -166,54 +170,68 @@ export default {
     editArgonaute(e) {
       this.nomToUpdate =
         e.target.parentNode.parentNode.parentNode.childNodes[0].innerHTML;
-
       let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
       let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
-
       let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
-
       toUpdate.classList.remove("inactive");
       toUpdate.classList.add("active");
-
       buttonToHide.classList.remove("active");
       buttonToHide.classList.add("inactive");
-
       buttonToShow.classList.remove("inactive");
       buttonToShow.classList.add("active");
     },
     updateArgonaute(e) {
-      let oldName =
+      const oldName =
         e.target.parentNode.parentNode.parentNode.childNodes[0].innerHTML;
       let buttonToHide = e.target.parentNode.parentNode.childNodes[0];
       let buttonToShow = e.target.parentNode.parentNode.childNodes[1];
-
       let toUpdate = e.target.parentNode.parentNode.parentNode.childNodes[1];
-
       if (this.nomToUpdate == "") {
         alert("Veuillez entrer un nom d'argonaute");
         this.nomToUpdate = oldName;
         return this.nomToUpdate;
-      } else {
+      } else if (this.nomToUpdate != "") {
         for (let i = 0; i < this.allArgonautes.length; i++) {
           if (this.allArgonautes[i].name == oldName) {
             let argonauteId = this.allArgonautes[i].id;
-            configAxios
-              .put(`argonaute/${argonauteId}`, {
-                name: this.nomToUpdate,
-              })
-              .then(() => {
-                configAxios.get(`argonautes`).then((response) => {
-                  this.allArgonautes = response.data;
-                  store.dispatch("getArgonautes", this.allArgonautes);
-                  toUpdate.classList.remove("inactive");
-                  toUpdate.classList.add("inactive");
-                  buttonToHide.classList.remove("inactive");
-                  buttonToHide.classList.add("active");
+            this.idArgonaute = argonauteId;
+            store.dispatch("getIdArgonauteUpdating", argonauteId);
+          }
+          for (let j = 0; j < this.allArgonautes.length; j++) {
+            if (
+              this.allArgonautes[j].id != this.idArgonaute &&
+              this.allArgonautes[j].name == this.nomToUpdate
+            ) {
+              this.oldName = oldName;
+              this.nomToUpdate = oldName;
+              alert("Cet argonaute existe déjà");
+              return this.nomToUpdate;
+            } else {
+              for (let j = 0; j < this.allArgonautes.length; j++) {
+                if (
+                  this.allArgonautes[j].id != this.idArgonaute &&
+                  this.allArgonautes[j].name != this.nomToUpdate
+                ) {
+                  configAxios
+                    .put(`argonaute/${this.idArgonaute}`, {
+                      name: this.nomToUpdate,
+                    })
+                    .then(() => {
+                      configAxios.get(`argonautes`).then((response) => {
+                        this.allArgonautes = response.data;
+                        store.dispatch("getArgonautes", this.allArgonautes);
+                        toUpdate.classList.remove("inactive");
+                        toUpdate.classList.add("inactive");
+                        buttonToHide.classList.remove("inactive");
+                        buttonToHide.classList.add("active");
 
-                  buttonToShow.classList.remove("active");
-                  buttonToShow.classList.add("inactive");
-                });
-              });
+                        buttonToShow.classList.remove("active");
+                        buttonToShow.classList.add("inactive");
+                      });
+                    });
+                }
+              }
+            }
           }
         }
       }
